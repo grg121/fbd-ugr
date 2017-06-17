@@ -1,0 +1,98 @@
+0. Abra el fichero "CreateCountry.sql". Intente inferir el diagrama E/R que se correspondería con las tablas presentes, y el significado de cada campo.
+
+1. Indique de qué tipo es cada atributo y  qué restricciones hay en la definición de las tablas.
+Country:
+  code -> cadena_caracteres fija 
+  nombre -> cadena_caracteres fija 
+  continent -> cadena_caracteres variable
+  IndepYear -> entera
+  Population -> entera
+  LifeExpectancy -> decimal, 
+  GNP -> decimal
+  GNPOld -> decimal
+  LocalName -> fija
+  GovernmentForm -> cadena_caracteres fija
+  HeadOfState -> cadena_caracteres fija
+  Capital -> entera
+  Code2 -> cadena_caracteres fija
+  
+  Restricciones: 
+  
+  * no pueden ser nulas: Code, nombre, Region, SufaceArea, Population, LocalName, GovernmentForm,
+  HeadOfState, Capital y Code2
+  * Code es clave primaria.
+
+  
+city:
+  ID -> entera
+  Nombre -> cadena_caracteres fija 
+  CountryCode -> cadena_caracteres fija 
+  District -> cadena_caracteres fija 
+  Population -> entera
+  PRIMARY KEY (ID),
+  CONSTRAINT city_ibfk_1 FOREIGN KEY (CountryCode) REFERENCES country (Code)
+
+  Restricciones: 
+  * No pueden ser nulas: Nombre, CountryCode, District ni Population
+  * ID es clave primaria y CountryCode es clave externa.
+  
+  countrylanguage:
+  CountryCode -> cadena_caracteres fija 
+  lang -> cadena_caracteres fija 
+  IsOfficial -> cadena_caracteres fija 
+  Percentage -> decimal
+  PRIMARY KEY (CountryCode,lang),
+  CONSTRAINT countryLanguage_ibfk_1 FOREIGN KEY (CountryCode) REFERENCES country (Code)
+
+  Restricciones:
+  * No pueden ser nulos: CountryCode, lang ni Percentage
+  * Es clave primaria CountryCode y lang (juntas) 
+  * IsOfficial debe ser 'T' o 'F'
+
+2. Abra SQL Developer y ejecute el script "CreateCountry.sql". Aparecen errores. Identifique porqué existen dichos errores y corrija el orden de creación de las tablas para solucionarlos.
+El problema es que se crean tablas que referencian a otras tablas antes de que las tablas que van a ser referenciadas sean creadas.
+Se soluciona modificando el orden en que se crean las tablas: country,city,countrylanguage.
+3. Abra el fichero "DropCountry.sql" y ejecútelo. Aparecen errores. Identifique porqué aparecen dichos errores y elimine las tablas en el orden oportuno.
+An attempt was made to drop a table with unique or primary keys referenced by foreign keys in another table
+Es decir, quiere borrar una tabla que referencia a otra sin haber borrado primero esa otra tabla. Luego tambi�n es un problema del orden,
+esta vez, de borrado. Basta con borrar en el siguiente orden:country,city,countrylanguage.
+
+4. Mediante el script "CreateCountry.sql", ejecute correctamente la creación de tablas. Asegúrese de que todas las tablas están creadas (utilizando la vista de SQL Developer)
+
+5. Seleccione los nombres de idiomas diferentes que se hablan en el mundo.
+
+SELECT distinct lang from countrylanguage;
+
+6. Mediante "SELECT count(*)", seleccione el n�mero de idiomas diferentes que se hablan en el mundo.
+
+SELECT count(distinct lang) from countrylanguage;
+
+7. Seleccione los continentes que tienen países en la base de datos.
+
+select distinct Continent from country;
+
+8, Seleccione el número de continentes que tienen países en la base de Datos.
+
+select count(distinct Continent) from country;
+
+9. Seleccione el país que tiene menor población.
+
+select nombre from country where Population = (select min(Population) from country)
+
+10. Seleccione el nombre de país de la ciudad que tiene menor población.
+
+select nombre from country where Population = (select min(Population) from country)
+
+11. Seleccione el país de menor superficie.
+
+select nombre from country where SurfaceArea = (select min(SurfaceArea) from country)
+
+12. Seleccione el país de menor número de habitantes por superficie.
+
+13. Seleccione los idiomas que se hablan en Spain, ordenados alfabéticamente.
+
+14. Seleccione las ciudades que pertenecen al mismo distrito que la ciudad de Granada.
+
+15. Haciendo uso de UPDATE, modifique la Ciudad de A Corugna por A Coruña.
+
+16. Seleccione los idiomas que se hablan en los países con régimen de gobierno Federal Republic
